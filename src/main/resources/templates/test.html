@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Arduino MQTT Data Display</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mqtt/5.11.0/mqtt.min.js"></script>
+</head>
+<body>
+<h1>Arduino MQTT Data</h1>
+<div id="data"></div>
+
+<script type="text/javascript">
+    const broker = "192.168.1.194"; // Địa chỉ MQTT broker
+    const port = 1883; // Cổng MQTT broker
+    const topic = "topic"; // Chủ đề để nhận dữ liệu
+
+
+    const client = mqtt.connect(`mqtt://${broker}:${port}`);
+
+    client.on("connect", function() {
+        console.log("Connected to MQTT broker");
+        client.subscribe(topic);
+    });
+
+    client.on("message", function(topic, message) {
+        document.getElementById("data").innerHTML = "Received data: " + message.toString();
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- <style>
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .rotate {
+        transform-origin: 50% 50%;
+        animation: spin infinite 3s linear;
+      }
+
+      .container {
+        height: 200px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      
+    }
+  </style> -->
+  <style>
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .rotate {
+      transform-origin: 50% 50%;
+      animation: spin infinite 2s linear;
+    }
+
+    .container {
+      height: 200px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      border-radius: 24px;
+      transition: 0.4s;
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 2px;
+      bottom: 2px;
+      background-color: white;
+      border-radius: 50%;
+      transition: 0.4s;
+    }
+
+    /* Khi nút trượt được bật */
+    input:checked+.toggle-slider {
+      background-color: #2196F3;
+    }
+
+    input:checked+.toggle-slider:before {
+      transform: translateX(26px);
+    }
+  </style>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Purple Admin</title>
+  <!-- plugins:css -->
+  <link rel="stylesheet" href="vendors/mdi/css/materialdesignicons.min.css">
+  <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
+  <link rel="logo" href="images/quat.svg">
+  <!-- endinject -->
+  <!-- Plugin css for this page -->
+  <!-- End plugin css for this page -->
+  <!-- inject:css -->
+  <!-- endinject -->
+  <!-- Layout styles -->
+  <link rel="stylesheet" href="css/style.css">
+  <!-- End layout styles -->
+  <link rel="shortcut icon" href="images/favicon.ico" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.2/mqttws31.min.js"></script>
+</head>
+
+<body>
+  <div class="container-scroller">
+    <div class="row p-0 m-0 proBanner" id="proBanner">
+      <div class="col-md-12 p-0 m-0">
+        <div class="card-body card-body-padding d-flex align-items-center justify-content-between">
+          <div class="ps-lg-1">
+            <div class="d-flex align-items-center justify-content-between">
+
+              <a href="https://www.bootstrapdash.com/product/purple-bootstrap-admin-template/?utm_source=organic&utm_medium=banner&utm_campaign=buynow_demo"
+                target="_blank" class="btn me-2 buy-now-btn border-0">Get Pro</a>
+            </div>
+          </div>
+          <div class="d-flex align-items-center justify-content-between">
+            <a href="https://www.bootstrapdash.com/product/purple-bootstrap-admin-template/"><i
+                class="mdi mdi-home me-3 text-white"></i></a>
+            <button id="bannerClose" class="btn border-0 p-0">
+              <i class="mdi mdi-close text-white me-0"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- partial:partials/_navbar.html -->
+    <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+      <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
+        <a class="navbar-brand brand-logo" href="index.html"><img src="images/logo.svg" alt="logo" /></a>
+        <a class="navbar-brand brand-logo-mini" href="index.html"><img src="images/logo-mini.svg"
+            alt="logo" /></a>
+      </div>
+      <div class="navbar-menu-wrapper d-flex align-items-stretch">
+        <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+          <span class="mdi mdi-menu"></span>
+        </button>
+        <div class="search-field d-none d-md-block">
+          <form class="d-flex align-items-center h-100" action="#">
+            <div class="input-group">
+              <div class="input-group-prepend bg-transparent">
+                <i class="input-group-text border-0 mdi mdi-magnify"></i>
+              </div>
+              <input type="text" class="form-control bg-transparent border-0" placeholder="Search projects">
+            </div>
+          </form>
+        </div>
+        <ul class="navbar-nav navbar-nav-right">
+          <li class="nav-item nav-profile dropdown">
+            <a class="nav-link dropdown-toggle" id="profileDropdown" href="#" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              <div class="nav-profile-img">
+                <img src="images/faces/face1.jpg" alt="image">
+                <span class="availability-status online"></span>
+              </div>
+              <div class="nav-profile-text">
+                <p class="mb-1 text-black">Nguyễn Minh Hiếu</p>
+              </div>
+            </a>
+        </ul>
+        <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
+          data-toggle="offcanvas">
+          <span class="mdi mdi-menu"></span>
+        </button>
+      </div>
+    </nav>
+    <!-- partial -->
+    <div class="container-fluid page-body-wrapper">
+      <!-- partial:partials/_sidebar.html -->
+      <nav class="sidebar sidebar-offcanvas active" id="sidebar">
+        <ul class="nav">
+          <li class="nav-item nav-profile">
+            <a href="#" class="nav-link">
+              <div class="nav-profile-image">
+                <img src="images/faces/face1.jpg" alt="profile">
+                <span class="login-status online"></span>
+                <!--change to offline or busy as needed-->
+              </div>
+              <div class="nav-profile-text d-flex flex-column">
+                <span class="font-weight-bold mb-2">Hiếu Nguyễn</span>
+                <span class="text-secondary text-small">Project Manager</span>
+              </div>
+              <i class="mdi mdi-bookmark-check text-success nav-profile-badge"></i>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">
+              <span class="menu-title">Dashboard</span>
+              <i class="mdi mdi-home menu-icon"></i>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/history}" target="_blank">
+
+              <span class="menu-title">Lịch sử biểu đồ</span>
+              <i class="mdi mdi-history menu-icon"></i>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/action}" target="_blank">
+
+              <span class="menu-title">Lịch sử sử dụng thiết bị</span>
+              <i class="mdi mdi-history menu-icon"></i>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/profile}" target="_blank">
+
+              <span class="menu-title">Thông tin cá nhân</span>
+              <i class="mdi mdi-history menu-icon"></i>
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <!-- partial -->
+      <div class="main-panel">
+        <div class="content-wrapper">
+          <div class="page-header">
+            <h3 class="page-title">
+              <span class="page-title-icon bg-gradient-primary text-white me-2">
+                <i class="mdi mdi-home"></i>
+              </span> Dashboard
+            </h3>
+            <nav aria-label="breadcrumb">
+              <ul class="breadcrumb">
+                <li class="breadcrumb-item active" aria-current="page">
+                  <span></span>Overview <i class="mdi mdi-alert-circle-outline icon-sm text-primary align-middle"></i>
+                </li>
+              </ul>
+            </nav>
+          </div>
+          <div class="row">
+            <div class="col-md-4 stretch-card grid-margin">
+              <div class="card bg-gradient-danger card-img-holder text-white">
+                <div class="card-body">
+                  <img src="images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
+                  <h4 class="font-weight-normal mb-3">Nhiệt Độ <i class="mdi mdi-chart-line mdi-24px float-right"></i>
+                  </h4>
+                  <h2 class="mb-5" id="tempChange">28°C</h2>
+
+<!--                  <h6 class="card-text" id="tempChange">Increased by 60%</h6>-->
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 stretch-card grid-margin">
+              <div class="card bg-gradient-info card-img-holder text-white">
+                <div class="card-body">
+                  <img src="images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
+                  <h4 class="font-weight-normal mb-3">Độ ẩm <i
+                      class="mdi mdi-bookmark-outline mdi-24px float-right"></i>
+                  </h4>
+                  <h2 class="mb-5" id="humChange">78%</h2>
+<!--                  <h6 class="card-text" id="humChange">Decreased by 10%</h6>-->
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 stretch-card grid-margin">
+              <div class="card bg-gradient-success card-img-holder text-white">
+                <div class="card-body">
+                  <img src="images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
+                  <h4 class="font-weight-normal mb-3">Ánh sáng <i class="mdi mdi-diamond mdi-24px float-right"></i>
+                  </h4>
+                  <h2 class="mb-5" id="lightChange">95</h2>
+<!--                  <h6 class="card-text" id="lightChange">Increased by 5%</h6>-->
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="d-flex">
+            <div class="col-md-7 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <div class="clearfix">
+                    <h4 class="card-title float-left">Biểu đồ</h4>
+                    <div id="visit-sale-chart-legend"
+                      class="rounded-legend legend-horizontal legend-top-right float-right"></div>
+                  </div>
+                  <canvas id="myChart" class="mt-4"></canvas>
+                </div>
+              </div>
+            </div>
+            <div class="text-center mt-1 ms-5">
+              <div>
+                <img id="Light" class="img-thumbnail" src="https://i.postimg.cc/FRFMwKr0/off.jpg" alt="Đèn tắt">
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="toggleSwitch">
+                <span class="toggle-slider"></span>
+              </label>
+              <p class="text-muted mt-2">(Di chuyển nút trượt để thay đổi trạng thái của đèn)</p>
+            </div>
+            <div class="text-center mt-1 ms-5">
+              <div>
+                <img id="Quat" src="images/quat.svg" alt="Quạt">
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="Caiquat">
+                <span class="toggle-slider"></span>
+              </label>
+              <!-- <button class="btn btn-primary" id="Caiquat">Tắt quạt</button> -->
+              <p class="text-muted mt-2">(Di chuyển nút trượt để thay đổi trạng thái của quạt)</p>
+            </div>
+
+            <script>
+              function sendLampStatus(lampName, status) {
+                // const status = lamp.toggle.classList.contains("active") ? "on" : "off";
+                // //lưu trạng thái đèn vào localStorage
+                // localStorage.setItem(lamp.name, status);
+
+                // Xây dựng body của request dưới dạng JSON
+                const data = JSON.stringify({name: lampName, status: status});
+
+                fetch("/update-lamp-status", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json"
+                  },
+                  body: data
+                })
+                        .then(response => {
+                          if (response.status === 200) {
+                            console.log(`Trạng thái đèn ${lampName} đã được cập nhật thành công`);
+                          } else {
+                            console.error(`Lỗi khi cập nhật trạng thái đèn ${lampName}`);
+                          }
+                        })
+                        .catch(error => {
+                          console.error('Lỗi kết nối đến server: ' + error);
+                        });
+              }
+            </script>
+
+<!--            bat tat quat-->
+            <script>
+              // Lấy tham chiếu đến hình ảnh và nút
+              const lightImage = document.getElementById('Quat');
+              const toggleButton = document.getElementById('Caiquat');
+
+              // Biến để theo dõi trạng thái quạt (mặc định là tắt)
+              let isFanOn = false;
+
+              // Biến để theo dõi trạng thái xoay
+              let isRotating = false;
+
+              // Gắn sự kiện click cho nút để thay đổi trạng thái quạt và xoay
+              toggleButton.addEventListener('click', toggleFan);
+
+              // Hàm để thay đổi trạng thái quạt và xoay
+              function toggleFan() {
+                isFanOn = !isFanOn;
+                if (isFanOn) {
+                  lightImage.classList.add('rotate'); // Thêm class để kích hoạt animation
+                  toggleButton.textContent = "Tắt quạt"; // Đổi nút sang "Tắt quạt"
+                  isRotating = true;
+                  sendLampStatus("quat", "on");
+                } else {
+                  lightImage.classList.remove('rotate'); // Loại bỏ class để tắt animation
+                  toggleButton.textContent = "Bật quạt"; // Đổi nút sang "Bật quạt"
+                  isRotating = false;
+                  sendLampStatus("quat", "off");
+                }
+              }
+            </script>
+          </div>
+
+        </div>
+        <!-- main-panel ends -->
+      </div>
+      <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+    <script src="vendors/js/vendor.bundle.base.js"></script>
+    <!-- endinject -->
+    <!-- Plugin js for this page -->
+    <script src="vendors/chart.js/Chart.min.js"></script>
+    <script src="js/jquery.cookie.js" type="text/javascript"></script>
+    <!-- End plugin js for this page -->
+    <!-- inject:js -->
+    <script src="js/off-canvas.js"></script>
+    <script src="js/hoverable-collapse.js"></script>
+    <script src="js/misc.js"></script>
+    <!-- endinject -->
+    <!-- Custom js for this page -->
+    <script src="js/dashboard.js"></script>
+    <script src="js/todolist.js"></script>
+    <!-- End custom js for this page -->
+<!--    bat tat den-->
+    <script>
+      let statusLight = false;
+      const imgLightOn = 'https://i.postimg.cc/qvT4j43x/on.jpg';
+      const imgLightOff = 'https://i.postimg.cc/FRFMwKr0/off.jpg';
+
+      const imgElement = document.getElementById('Light');
+      const toggleSwitch = document.getElementById('toggleSwitch');
+      let isLightOn = false;
+      toggleSwitch.addEventListener('change', toggleLight);
+
+      function toggleLight() {
+        isLightOn = toggleSwitch.checked;
+        if (isLightOn) {
+          sendLampStatus("den", "on");
+          imgElement.src = imgLightOn;
+          const date = currentTime.getHours() + ":" + currentTime.getMinutes() + ":" + currentTime.getSeconds();
+          updatetb(date, 'Đèn', 'Bật');
+          console.log('bật');
+
+        } else {
+          sendLampStatus("den", "off");
+          imgElement.src = imgLightOff;
+          const date = currentTime.getHours() + ":" + currentTime.getMinutes() + ":" + currentTime.getSeconds();
+          updatetb(date, 'Đèn', 'Tắt');
+          console.log('tắt');
+
+        }
+      }
+    </script>
+
+<!--    du lieu hien thi-->
+    <script>
+      const temperatureElement = document.getElementById('tempChange');
+      const humidityElement = document.getElementById('humChange');
+      const lightElement = document.getElementById('lightChange');
+
+      function updateData() {
+        // Sử dụng AJAX để gửi yêu cầu lấy dữ liệu từ API
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4 && xhr.status === 200) {
+            var data = JSON.parse(xhr.responseText);
+
+            // Cập nhật màu nền và hiển thị nhiệt độ
+            temperatureElement.innerText = data.temperature;
+            // Cập nhật màu nền và hiển thị độ ẩm
+            humidityElement.innerText = data.humidity;
+            // Cập nhật màu nền và hiển thị độ sáng
+            lightElement.innerText = data.light;
+
+          }
+        };
+        xhr.open("GET", "/get-latest", true); // Sử dụng URL tương ứng với API của bạn
+        xhr.send();
+      }
+
+      // Gọi hàm updateData() để cập nhật dữ liệu ban đầu
+      updateData();
+
+      // Cập nhật dữ liệu mỗi 5 giây (hoặc tần suất mong muốn)
+      setInterval(updateData, 5000);
+
+    </script>
+
+<!--    du lieu bieu do-->
+    <script>
+      const temperatureData = [];
+      const humidityData = [];
+      const lightData = [];
+      const timestamps = [];
+      const date = [];
+      const state = [];
+      const name = [];
+      timestamps.push(0)
+
+
+      // Cập nhật dữ liệu mỗi 5 giây (hoặc tần suất mong muốn)
+      // Cập nhật dữ liệu mỗi 5 giây (hoặc tần suất mong muốn)
+      setInterval(() => {
+        $.ajax({
+          url: "/get-latest-7-data", // Đặt URL tương ứng với API của bạn
+          type: "GET",
+          success: function (data) {
+            // Tách dữ liệu thành các mảng riêng biệt cho nhiệt độ, độ ẩm và độ sáng
+            const temperatures = data.map(item => parseFloat(item.temperature));
+            const humiditys = data.map(item => parseFloat(item.humidity));
+            const brightness = data.map(item => parseFloat(item.light));
+            // const labels = data.map(item => item.time); // Sử dụng thời gian làm nhãn
+            const labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+
+            // Tạo dữ liệu mới cho biểu đồ
+            const newData = {
+              labels: labels,
+              datasets: [{
+                label: 'Nhiệt độ',
+                data: temperatures,
+                fill: false,
+                borderColor: '#dc0000'
+              },
+                {
+                  label: 'Độ ẩm',
+                  data: humiditys,
+                  fill: false,
+                  borderColor: '#a5b6c4'
+                },
+                {
+                  label: 'Độ sáng',
+                  data: brightness,
+                  fill: false,
+                  borderColor: 'rgb(75, 192, 192)'
+                }]
+            };
+
+            // Cập nhật biểu đồ
+            const ctx = document.getElementById('myChart');
+            ctx.style.width = '100%';
+            ctx.style.height = '100%';
+
+            // if (myChart) {
+            //     myChart.destroy(); // Hủy biểu đồ cũ trước khi vẽ biểu đồ mới
+            // }
+
+            myChart = new Chart(ctx, {
+              type: 'line',
+              data: newData,
+              options: {
+                animations: {
+                  x: {
+                    easing: 'linear'
+                  },
+                  y: {
+                    type: 'number',
+                    easing: 'linear'
+                  }
+                },
+                scales: {
+                  x: {
+                    reverse: true // Thêm tùy chọn reverse cho trục x
+                  }
+                },
+                title: {
+                  display: true,
+                  text: 'Biểu đồ'
+                }
+              }
+            });
+          }
+        });
+      }, 2000);
+
+    </script>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  </div>
+</body>
+
+</html>
